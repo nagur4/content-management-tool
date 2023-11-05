@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Content Management Tool</title>
+    <style>
+        body {
+            background-color: #000; /* Black background */
+            color: #fff; /* White text */
+            font-family: Arial, sans-serif;
+        }
+        .builder-container {
+            width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff; /* White container background */
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .builder-header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #000; /* Black text color */
+        }
+        .builder-element {
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            position: relative;
+            background-color: #fff; /* White element background */
+            border-radius: 4px;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+        }
+        .delete-button {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            cursor: pointer;
+            color: #ff0000;
+            font-size: 20px;
+        }
+        button {
+            background-color: #0074d9; /* Blue button background */
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        div[contentEditable='true'] {
+            color: #333; /* Dark gray text color for content */
+        }
+    </style>
+</head>
+<body>
+    <div class="builder-container" id="builder-container">
+        <h1 class="builder-header">Content Management Tool</h1>
+        <button onclick="addElement('text')">Add Text</button>
+        <button onclick="addElement('image')">Add Image</button>
+        <button onclick="addElement('video')">Add Video</button>
+    </div>
+
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js"></script>
+    <script>
+        // Initialize TinyMCE
+        tinymce.init({
+            selector: "div[contentEditable='true']", // Target editable divs
+            plugins: "autolink lists link image",
+            toolbar: "undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | link image",
+        });
+
+        function addElement(type) {
+            const container = document.getElementById('builder-container');
+            const newElement = document.createElement('div');
+            newElement.className = 'builder-element';
+
+            if (type === 'text') {
+                // For text elements, include "X" on the top-right corner of the element
+                const deleteButton = document.createElement('div');
+                deleteButton.className = 'delete-button';
+                deleteButton.innerHTML = 'X';
+                deleteButton.onclick = function() {
+                    container.removeChild(newElement);
+                };
+                newElement.appendChild(deleteButton);
+
+                const editorDiv = document.createElement('div');
+                editorDiv.contentEditable = true;
+                newElement.appendChild(editorDiv);
+            } else if (type === 'image') {
+                const imageURL = prompt("Enter the image URL (e.g., https://example.com/image.jpg):");
+                if (imageURL) {
+                    const image = document.createElement('img');
+                    image.src = imageURL;
+                    image.alt = 'Image Element';
+                    newElement.appendChild(image);
+
+                    const deleteButton = document.createElement('div');
+                    deleteButton.className = 'delete-button';
+                    deleteButton.innerHTML = 'X';
+                    deleteButton.onclick = function() {
+                        container.removeChild(newElement);
+                    };
+                    newElement.appendChild(deleteButton);
+                }
+            } else if (type === 'video') {
+                const videoURL = prompt("Enter the video URL from YouTube (e.g., https://www.youtube.com/watch?v=VIDEO_ID):");
+                if (videoURL) {
+                    const iframe = document.createElement('iframe');
+                    iframe.width = '560';
+                    iframe.height = '315';
+                    iframe.src = videoURL.replace("watch?v=", "embed/");
+                    iframe.frameBorder = '0';
+                    iframe.allowFullscreen = true;
+                    newElement.appendChild(iframe);
+
+                    const deleteButton = document.createElement('div');
+                    deleteButton.className = 'delete-button';
+                    deleteButton.innerHTML = 'X';
+                    deleteButton.onclick = function() {
+                        container.removeChild(newElement);
+                    };
+                    newElement.appendChild(deleteButton);
+                }
+            }
+
+            container.appendChild(newElement);
+        }
+    </script>
+</body>
+</html>
